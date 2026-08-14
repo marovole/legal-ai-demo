@@ -1,0 +1,4 @@
+.env
+.env.local
+.cursor/mcp.local.json
+.DS_Store

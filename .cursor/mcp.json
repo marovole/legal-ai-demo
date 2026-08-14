@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "pkulaw-law-search": {
+      "url": "https://apim-gateway.pkulaw.com/mcp-law-search-service",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-law-keyword": {
+      "url": "https://apim-gateway.pkulaw.com/mcp-law",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-case-semantic-search": {
+      "url": "https://apim-gateway.pkulaw.com/mcp-case-search-service",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-case-keyword": {
+      "url": "https://apim-gateway.pkulaw.com/mcp-case",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-law-item-keyword": {
+      "url": "https://apim-gateway.pkulaw.com/mcp-fatiao",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-law-recognition": {
+      "url": "https://apim-gateway.pkulaw.com/law_recognition",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-case-number-recognition": {
+      "url": "https://apim-gateway.pkulaw.com/case_number_recognition",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-citation-validator": {
+      "url": "https://apim-gateway.pkulaw.com/pku_citation_validator",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    },
+    "pkulaw-doc-link": {
+      "url": "https://apim-gateway.pkulaw.com/add-doc-link",
+      "headers": { "Authorization": "Bearer YOUR_ACCESS_TOKEN" }
+    }
+  }
+}
