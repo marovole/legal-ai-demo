@@ -2,3 +2,6 @@
 .env.local
 .cursor/mcp.local.json
 .DS_Store
+__pycache__/
+*.pyc
+.venv/

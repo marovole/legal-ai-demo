@@ -7,18 +7,57 @@ alwaysApply: true
 
 本仓库的输出一律是底稿，不是法律意见。律师定方向、删改口径，本人核验后才能对外发出。
 
-## 每案五步
+运行时技能只用 `.cursor/skills/` 官方对齐版。`docs/guide/` 是导读，运行时不要用。
 
-1. 律师填写 `examples/case-brief-template.md`（案由 / 争议焦点 / 关键事实 / 初步定性，3–10 行）。缺这四项就只问这四项，不要编造事实。
-2. 用户要「类案检索报告」「类案检索」或「法发 24 号报告」时，使用 skill `pkulaw-case-research-report`。报告结构必须覆盖法发〔2020〕24 号第八条。
-3. 律师删改方向和审判口径。Agent 按律师改过的口径继续，不要自行改回。
-4. 用律师指定的国内模型、按所里模板出稿。
-5. 用户要「签发前」「引用核验」「能不能发」或 citation audit 时，使用 skill `pkulaw-citation-audit`。核验不过的条目必须标「不能发」并给出改法。
+## 一案一档
+
+写报告前先开档：复制 `matters/_template/` → `matters/<案号或短名>/`。
+
+每案路径：
+
+| 文件 | 用途 |
+| --- | --- |
+| `brief.md` | 案由 / 焦点 / 事实 / 初步定性 |
+| `search-log.md` | 回执表：时间 / 工具 / 查询式 / 返回id或案号或法条 / url / 回执ID |
+| `report.md` | 类案检索报告底稿 |
+| `lawyer-delta.md` | 律师改稿口径 |
+| `audit.md` | 引用核验底稿 |
+| `signoff.md` | 签发三态 + 核验人 + ISO 时间 + 导出勾选 |
+
+演示卷宗：`matters/demo-labor-dismissal/`。
+
+## 每案步骤
+
+1. 开档并填写 `brief.md`。缺案由 / 争议焦点 / 关键事实 / 初步定性就只问这四项，不要编造事实。用途未确认（归档 / 呈法官 / 客户或所内）不开工。默认：所内/客户底稿（见 `profile.md`）。
+2. 用户要「类案检索报告」「类案检索」或「法发 24 号报告」时，使用 `.cursor/skills/pkulaw-case-research-report`。写入 `report.md`，每条引用写入 `search-log.md`。指导性案例必须单独检索，0 命中也留节。
+3. 律师在 `lawyer-delta.md` 删改方向和审判口径。Agent 按律师改过的口径继续，不要自行改回。
+4. 按所里模板出稿：短、少套话，先结论。
+5. 用户要「签发前」「引用核验」「能不能发」或 citation audit 时，使用 `.cursor/skills/pkulaw-citation-audit`。写入 `audit.md` 与 `signoff.md`。核验不过的条目必须标「不能发」并给出改法。
+
+## 回执规则
+
+- 必须通过北大法宝 MCP 检索法规和案例，禁止用网页搜索代替法律库。
+- 没检索到的法条 / 案号 / 裁判要点禁止补写；工具失败要如实说明，禁止凭记忆填充。
+- 每条法条、每个案号必须能指回 `search-log.md` 回执，否则不得「可以签发」。
+- 禁止把列表 Total 写成「共找到 N 条类案」。
+- 个位数样本不得写「法院普遍认为」。
+
+## 4 个核心 MCP
+
+只用 `.cursor/mcp.json` 里的 4 个服务：`pkulaw-law-search`、`pkulaw-case-semantic-search`、`pkulaw-law-item-keyword`、`pkulaw-citation-validator`。其余见 `.cursor/mcp.full.json.example`。MCP 不通：未完成核验，不得据本底稿签发。
+
+## 签发闸门
+
+- 签发三态置顶：可以签发 / 修正后可签发 / 不得签发。
+- 可以签发必须有核验人 + ISO 时间；不得签发禁止导出。
+- 废止 ≠ 自动错误；先锚定法律事实时间。
+- 抽出「根据相关法律规定」无源命题。
+- 九维核验：存在性、版本与时效、条号、条文内容、整条引用、命题对应、可引性、上位法、格式。
+- 导出前跑 `python3 scripts/check_receipts.py matters/<id>` 与 `python3 scripts/check_signoff.py matters/<id>`。
+- 不修改 `.cursor/mcp.json` 里的真实 Token，不要把 Token 写进任何文件。只允许 `${env:PKULAW_ACCESS_TOKEN}` 或 `YOUR_ACCESS_TOKEN`。
 
 ## 红线
 
 - 输出是底稿，不是法律意见。文末须标明。
-- 必须通过北大法宝 MCP 检索法规和案例，禁止用网页搜索代替法律库。
-- 没检索到的法条 / 案号 / 裁判要点禁止补写；工具失败要如实说明，禁止凭记忆填充。
 - 对外发出前必须律师本人核验。
-- 不修改 `.cursor/mcp.json` 里的真实 Token，不要把 Token 写进任何文件。
+- 检索平台写「北大法宝案例库」，不要写成裁判文书网。

@@ -1,0 +1,15 @@
+name: eval
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Python gates
+        run: python3 -m py_compile scripts/check_receipts.py scripts/check_signoff.py scripts/lint_report.py scripts/check_audit_rubric.py scripts/check_mcp_config.py
+      - name: Run eval
+        run: bash scripts/eval.sh
