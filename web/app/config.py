@@ -46,7 +46,17 @@ MCP_URLS = {
 }
 
 
+def _env_port(default: int = 8080) -> int:
+    raw = os.environ.get("PORT", str(default)).strip()
+    try:
+        return int(raw)
+    except ValueError:
+        # e.g. literal "$PORT" when a start command was not shell-expanded
+        return default
+
+
 def load_settings() -> Settings:
+    """Load settings from env; never raises on missing optional keys."""
     root = Path(os.environ.get("REPO_ROOT", str(_repo_root()))).resolve()
     matters = Path(os.environ.get("MATTERS_DIR", str(root / "matters"))).resolve()
     return Settings(
@@ -64,6 +74,6 @@ def load_settings() -> Settings:
         app_password=os.environ.get("APP_PASSWORD", "").strip(),
         session_secret=os.environ.get("SESSION_SECRET", "").strip()
         or "dev-only-change-me",
-        host=os.environ.get("HOST", "0.0.0.0"),
-        port=int(os.environ.get("PORT", "8080")),
+        host=os.environ.get("HOST", "0.0.0.0").strip() or "0.0.0.0",
+        port=_env_port(),
     )

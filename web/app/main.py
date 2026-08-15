@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+from pathlib import Path
+
 import markdown as md
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
 
 from .auth import install_session, is_logged_in, logout, require_login, try_login
 from .config import load_settings
@@ -21,7 +23,16 @@ store = MatterStore(settings)
 mcp = McpClient(settings)
 llm = LlmClient(settings)
 
-app = FastAPI(title="律师一案一档", docs_url=None, redoc_url=None)
+
+@asynccontextmanager
+async def _lifespan(_app: FastAPI):
+    print(f"listening on {settings.host}:{settings.port}", flush=True)
+    yield
+
+
+app = FastAPI(
+    title="律师一案一档", docs_url=None, redoc_url=None, lifespan=_lifespan
+)
 install_session(app, settings)
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
