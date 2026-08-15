@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ matter.name }} · 律师一案一档{% endblock %}
+{% block content %}
+<p class="crumb"><a href="/">卷宗</a> / <strong>{{ matter.name }}</strong></p>
+
+<section class="panel">
+  <div class="row between">
+    <h1>{{ matter.name }}</h1>
+    <div class="actions">
+      <form method="post" action="/matters/{{ matter.name }}/run-report" class="inline">
+        <button type="submit">出类案检索报告</button>
+      </form>
+      <form method="post" action="/matters/{{ matter.name }}/run-audit" class="inline">
+        <button type="submit" class="secondary">签发前引用核验</button>
+      </form>
+      <form method="post" action="/matters/{{ matter.name }}/run-gates" class="inline">
+        <button type="submit" class="ghost">跑闸门脚本</button>
+      </form>
+    </div>
+  </div>
+  <p class="muted">缺 Token / API Key 时页面仍可打开；点按钮会返回中文错误说明缺哪个环境变量。</p>
+</section>
+
+<section class="panel">
+  <h2>闸门检查</h2>
+  <div class="gates">
+    <div class="gate {% if gates.receipts.ok %}pass{% else %}fail{% endif %}">
+      <strong>check_receipts.py</strong> · {{ gates.receipts.label }}
+      <pre>{{ gates.receipts.stdout or gates.receipts.stderr or '（无输出）' }}</pre>
+    </div>
+    <div class="gate {% if gates.signoff.ok %}pass{% else %}fail{% endif %}">
+      <strong>check_signoff.py</strong> · {{ gates.signoff.label }}
+      <pre>{{ gates.signoff.stdout or gates.signoff.stderr or '（无输出）' }}</pre>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>brief.md</h2>
+  <form method="post" action="/matters/{{ matter.name }}/brief" class="stack">
+    <textarea name="brief" rows="18">{{ files['brief.md'] }}</textarea>
+    <button type="submit">保存 brief</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>lawyer-delta.md</h2>
+  <form method="post" action="/matters/{{ matter.name }}/lawyer-delta" class="stack">
+    <textarea name="content" rows="8">{{ files['lawyer-delta.md'] }}</textarea>
+    <button type="submit" class="secondary">保存律师口径</button>
+  </form>
+</section>
+
+{% macro doc(title, key) %}
+<section class="panel">
+  <h2>{{ title }}</h2>
+  <details open>
+    <summary>预览</summary>
+    <div class="md">{{ rendered[key] | safe }}</div>
+  </details>
+  <details>
+    <summary>源 Markdown</summary>
+    <pre class="src">{{ files[key] }}</pre>
+  </details>
+</section>
+{% endmacro %}
+
+{{ doc('report.md', 'report.md') }}
+{{ doc('search-log.md', 'search-log.md') }}
+{{ doc('audit.md', 'audit.md') }}
+{{ doc('signoff.md', 'signoff.md') }}
+{% endblock %}

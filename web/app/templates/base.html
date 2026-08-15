@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}律师一案一档{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap row">
+      <a class="brand" href="/">律师一案一档</a>
+      <nav class="nav">
+        <span class="pill {% if pkulaw_ok %}on{% else %}off{% endif %}">法宝 {% if pkulaw_ok %}已配置{% else %}未配置 Token{% endif %}</span>
+        <span class="pill {% if llm_ok %}on{% else %}off{% endif %}">模型 {% if llm_ok %}已配置{% else %}未配置 Key{% endif %}</span>
+        {% if auth_required and logged_in %}
+        <form method="post" action="/logout" class="inline">
+          <button type="submit" class="linkish">退出</button>
+        </form>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% if flash %}
+    <div class="flash {{ flash.level }}">{{ flash.message }}</div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="wrap foot">
+    <p>输出一律是底稿，不是法律意见。对外发出前必须律师本人核验。</p>
+  </footer>
+</body>
+</html>

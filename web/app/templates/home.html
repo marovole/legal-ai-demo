@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}卷宗列表 · 律师一案一档{% endblock %}
+{% block content %}
+<section class="panel">
+  <div class="row between">
+    <h1>卷宗</h1>
+  </div>
+  <p class="muted">一案一档。跳过 <code>_template</code>。开档后先填 brief，再出类案报告与签发前核验。</p>
+
+  <form method="post" action="/matters/create" class="row create">
+    <label class="grow">新建短名
+      <input name="name" placeholder="如 demo-labor-2" required maxlength="64" />
+    </label>
+    <button type="submit">开档</button>
+  </form>
+
+  {% if matters %}
+  <ul class="matter-list">
+    {% for m in matters %}
+    <li><a href="/matters/{{ m.name }}">{{ m.name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">暂无卷宗。可先开档，或确认 matters/ 目录已挂载。</p>
+  {% endif %}
+</section>
+{% endblock %}

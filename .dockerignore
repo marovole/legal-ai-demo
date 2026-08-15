@@ -1,0 +1,8 @@
+.git
+.venv
+__pycache__
+*.pyc
+.env
+.env.local
+.cursor/mcp.local.json
+**/__pycache__
