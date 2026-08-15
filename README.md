@@ -52,6 +52,8 @@ legal-ai-demo/
 ├── matters/                   # 一案一档
 │   ├── _template/
 │   └── demo-labor-dismissal/
+├── web/                       # 律师端 Web（FastAPI + Jinja）
+├── Dockerfile / railway.toml  # Railway 部署
 ├── .cursor/skills/            # 运行时官方对齐版（不要用 docs/guide）
 ├── .cursor/mcp.json           # 4 个核心服务
 ├── scripts/                   # 回执 / 签发 / 文风 / 核验量规 / MCP 配置
@@ -59,6 +61,48 @@ legal-ai-demo/
 ```
 
 运行时技能：`.cursor/skills/`。精简导读：`docs/guide/`（运行时不要用）。
+
+## Web 应用（本地 / Railway）
+
+给律师用的浏览器界面：列卷宗、开档、改 `brief.md`、一键「出类案检索报告」与「签发前引用核验」、展示闸门脚本结果。数据仍落在 `matters/` 磁盘文件；AI 只出底稿。
+
+### 环境变量
+
+| 变量 | 必填 | 说明 |
+| --- | --- | --- |
+| `PKULAW_ACCESS_TOKEN` | 出报告/核验时 | 北大法宝 MCP；缺失时 UI 可开，按钮返回中文错误 |
+| `OPENAI_API_KEY` | 出报告/核验时 | OpenAI 兼容接口密钥 |
+| `OPENAI_BASE_URL` | 否 | 默认 `https://api.deepseek.com` |
+| `OPENAI_MODEL` | 否 | 默认 `deepseek-chat` |
+| `APP_PASSWORD` | 否 | 设置后启用简单登录；不设则开放（演示） |
+| `SESSION_SECRET` | 建议生产设置 | Cookie 会话密钥 |
+| `PORT` | 否 | 默认 `8080`（Railway 会注入） |
+| `MATTERS_DIR` | 否 | 卷宗目录，默认仓库内 `matters/`（可挂 Railway Volume） |
+
+不要把真实 Token 写进仓库。参考 `.env.example`。
+
+### 本地运行
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r web/requirements.txt
+export PKULAW_ACCESS_TOKEN=... OPENAI_API_KEY=...   # 可选 APP_PASSWORD
+uvicorn web.app.main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+健康检查：`GET /healthz`。
+
+### Railway
+
+1. 从本仓库部署（已含 `Dockerfile` + `railway.toml`，健康检查 `/healthz`）。
+2. 在 Railway 填入上表环境变量。
+3. 建议给 `/app/matters`（或你设置的 `MATTERS_DIR`）挂持久 Volume，避免重启丢卷宗。
+
+容器启动命令等价于：
+
+```bash
+uvicorn web.app.main:app --host 0.0.0.0 --port $PORT
+```
 
 ## 链接
 
