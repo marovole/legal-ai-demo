@@ -111,3 +111,7 @@ uvicorn web.app.main:app --host 0.0.0.0 --port $PORT
 - https://mcp.pkulaw.com/pricing
 - https://gitee.com/pkulaw/pkulaw-skills
 - https://www.npmjs.com/package/@pkulaw/mcp-cli
+
+---
+
+**作者与 FDE 落地方法论主页**：[翡冷翠 · marovole.com](https://marovole.com/)
